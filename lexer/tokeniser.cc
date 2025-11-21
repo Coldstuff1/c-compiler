@@ -297,9 +297,9 @@ static Token lexStringLiteral(Scanner &scanner, int line, int column,
     }
 
     if (nextChar == -1) {
-      error(std::format("Lexing error: string at {}:{} must be enclosed "
-                        "between quotes!",
-                        line, column));
+      error(std::format(
+          "Lexing error: string at {}:{} must be enclosed between quotes!",
+          line, column));
       return Token{TokenClass::INVALID, str, line, column};
     }
     str += nextChar;
@@ -314,6 +314,29 @@ static Token lexStringLiteral(Scanner &scanner, int line, int column,
 static Token lexIntLiteral(Scanner &scanner, std::string str, int line,
                            int column, ErrorFunction error) {
   char nextChar{scanner.peek()};
+  while (std::isdigit(nextChar)) {
+    str += nextChar;
+    scanner.next();
+    nextChar = scanner.peek();
+  }
+  return Token{TokenClass::INT_LITERAL, str, line, column};
+}
+
+static Token lexInclude(Scanner &scanner, int line, int column,
+                        ErrorFunction error) {
+  char nextChar{scanner.peek()};
+  std::string str{""};
+
+  while (std::isalpha(nextChar)) {
+    str += nextChar;
+    scanner.next();
+    nextChar = scanner.peek();
+  }
+  if (str == "include")
+    return Token{TokenClass::INCLUDE, "#" + str, line, column};
+  error(std::format("Lexing error: invalid include token at {}:{}!", line,
+                    column));
+  return Token{TokenClass::INVALID, str, line, column};
 }
 
 static Token possibleKeywordToToken(const std::string_view str, const int line,
