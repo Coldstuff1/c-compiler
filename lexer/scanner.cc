@@ -10,7 +10,7 @@ char Scanner::peek() {
   if (peeked != -1)
     return peeked;
 
-  if (pos == (buffer.size()))
+  if (pos >= (buffer.size()))
     return -1;
 
   peeked = buffer[pos++];
@@ -26,7 +26,7 @@ char Scanner::next() {
     peeked = -1;
   } else {
 
-    if (pos == (buffer.size()))
+    if (pos >= (buffer.size()))
       return -1;
 
     nextChar = buffer[pos++];
