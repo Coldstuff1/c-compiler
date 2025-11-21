@@ -5,10 +5,12 @@ cc_library(
   srcs = [
   "scanner.cc", 
   "token.cc",
+  "tokeniser.cc",
   ],
   hdrs = [
   "scanner.hpp",
   "token.hpp",
+  "tokeniser.hpp",
   ],
   visibility = ["//main:__pkg__"],
 )
