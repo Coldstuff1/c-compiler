@@ -1,3 +1,4 @@
+#include "../lexer/scanner.hpp"
 #include <iostream>
 
 int main() {

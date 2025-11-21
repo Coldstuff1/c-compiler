@@ -8,7 +8,7 @@ private:
   char peeked{-1};
   int line{1};
   int column{1};
-  int pos{0};
+  long unsigned int pos{0};
 
 public:
   Scanner(std::ifstream &file) {
