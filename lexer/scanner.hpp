@@ -1,3 +1,6 @@
+#ifndef SCANNER_H
+#define SCANNER_H
+
 #include <fstream>
 #include <vector>
 
@@ -23,3 +26,4 @@ public:
   bool hasNext();
 };
 } // namespace lexer
+#endif

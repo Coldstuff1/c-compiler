@@ -1,3 +1,6 @@
+#ifndef TOKENISER_H
+#define TOKENISER_H
+
 #include "scanner.hpp"
 #include "token.hpp"
 #include <functional>
@@ -19,8 +22,10 @@ private:
   }
 
 public:
-  Tokeniser(Scanner scanner) : scanner(scanner) {}
+  Tokeniser(Scanner &scanner) : scanner(scanner) {}
 
   Token nextToken();
 };
 } // namespace lexer
+
+#endif
