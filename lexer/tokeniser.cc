@@ -44,6 +44,8 @@ static Token possibleKeywordToToken(const std::string_view str, const int line,
 static bool isEscapeCharacter(const char curChar);
 static char toEscapeCharacter(const char curChar);
 
+int Tokeniser::getErrorCount() { return errors; }
+
 Token Tokeniser::nextToken() {
   char nextChar;
 

@@ -25,6 +25,7 @@ public:
   Tokeniser(Scanner &scanner) : scanner(scanner) {}
 
   Token nextToken();
+  int getErrorCount();
 };
 } // namespace lexer
 
