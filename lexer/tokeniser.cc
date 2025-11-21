@@ -47,15 +47,15 @@ static char toEscapeCharacter(const char curChar);
 Token Tokeniser::nextToken() {
   char nextChar;
 
-  int line = scanner.getLine();
-  int column = scanner.getColumn();
+  int line{scanner.getLine()};
+  int column{scanner.getColumn()};
 
   ErrorFunction error_func{[this](std::string_view msg) { this->error(msg); }};
 
   nextChar = scanner.next();
 
   if (nextChar == -1)
-    return Token(TokenClass::END, "EOF", line, column);
+    return Token{TokenClass::END, "EOF", line, column};
 
   if (std::isspace(nextChar))
     return nextToken();
@@ -78,88 +78,88 @@ Token Tokeniser::nextToken() {
     return lexInclude(scanner, line, column, error_func);
 
   if (nextChar == '+')
-    return Token(TokenClass::PLUS, std::string{nextChar}, line, column);
+    return Token{TokenClass::PLUS, std::string{nextChar}, line, column};
 
   if (nextChar == '-')
-    return Token(TokenClass::MINUS, std::string{nextChar}, line, column);
+    return Token{TokenClass::MINUS, std::string{nextChar}, line, column};
 
   if (nextChar == '*')
-    return Token(TokenClass::ASTERIX, std::string{nextChar}, line, column);
+    return Token{TokenClass::ASTERIX, std::string{nextChar}, line, column};
 
   if (nextChar == '%')
-    return Token(TokenClass::REM, std::string{nextChar}, line, column);
+    return Token{TokenClass::REM, std::string{nextChar}, line, column};
 
   if (nextChar == '{')
-    return Token(TokenClass::LBRA, std::string{nextChar}, line, column);
+    return Token{TokenClass::LBRA, std::string{nextChar}, line, column};
 
   if (nextChar == '}')
-    return Token(TokenClass::RBRA, std::string{nextChar}, line, column);
+    return Token{TokenClass::RBRA, std::string{nextChar}, line, column};
 
   if (nextChar == '(')
-    return Token(TokenClass::LPAR, std::string{nextChar}, line, column);
+    return Token{TokenClass::LPAR, std::string{nextChar}, line, column};
 
   if (nextChar == ')')
-    return Token(TokenClass::RPAR, std::string{nextChar}, line, column);
+    return Token{TokenClass::RPAR, std::string{nextChar}, line, column};
 
   if (nextChar == '[')
-    return Token(TokenClass::LSBR, std::string{nextChar}, line, column);
+    return Token{TokenClass::LSBR, std::string{nextChar}, line, column};
 
   if (nextChar == ']')
-    return Token(TokenClass::RSBR, std::string{nextChar}, line, column);
+    return Token{TokenClass::RSBR, std::string{nextChar}, line, column};
 
   if (nextChar == ';')
-    return Token(TokenClass::SC, std::string{nextChar}, line, column);
+    return Token{TokenClass::SC, std::string{nextChar}, line, column};
 
   if (nextChar == ',')
-    return Token(TokenClass::COMMA, std::string{nextChar}, line, column);
+    return Token{TokenClass::COMMA, std::string{nextChar}, line, column};
 
   if (nextChar == '.')
-    return Token(TokenClass::DOT, std::string{nextChar}, line, column);
+    return Token{TokenClass::DOT, std::string{nextChar}, line, column};
 
   if (nextChar == '&') {
     if (scanner.peek() != '&')
-      return Token(TokenClass::AND, std::string{nextChar}, line, column);
+      return Token{TokenClass::AND, std::string{nextChar}, line, column};
     scanner.next();
-    return Token(TokenClass::LOGAND, std::string{nextChar, '&'}, line, column);
+    return Token{TokenClass::LOGAND, std::string{nextChar, '&'}, line, column};
   }
 
   if (nextChar == '=') {
     if (scanner.peek() != '=')
-      return Token(TokenClass::ASSIGN, std::string{nextChar}, line, column);
+      return Token{TokenClass::ASSIGN, std::string{nextChar}, line, column};
     scanner.next();
-    return Token(TokenClass::EQ, std::string{nextChar, '='}, line, column);
+    return Token{TokenClass::EQ, std::string{nextChar, '='}, line, column};
   }
 
   if (nextChar == '|' && scanner.peek() == '|') {
     scanner.next();
-    return Token(TokenClass::LOGOR, std::string{nextChar, '|'}, line, column);
+    return Token{TokenClass::LOGOR, std::string{nextChar, '|'}, line, column};
   }
 
   if (nextChar == '!' && scanner.peek() == '=') {
     scanner.next();
-    return Token(TokenClass::NE, std::string{nextChar, '='}, line, column);
+    return Token{TokenClass::NE, std::string{nextChar, '='}, line, column};
   }
 
   if (nextChar == '<') {
     if (scanner.peek() != '=')
-      return Token(TokenClass::LT, std::string{nextChar}, line, column);
+      return Token{TokenClass::LT, std::string{nextChar}, line, column};
     scanner.next();
-    return Token(TokenClass::LE, std::string{nextChar, '='}, line, column);
+    return Token{TokenClass::LE, std::string{nextChar, '='}, line, column};
   }
 
   if (nextChar == '>') {
     if (scanner.peek() != '=')
-      return Token(TokenClass::GT, std::string{nextChar}, line, column);
+      return Token{TokenClass::GT, std::string{nextChar}, line, column};
     scanner.next();
-    return Token(TokenClass::GE, std::string{nextChar, '='}, line, column);
+    return Token{TokenClass::GE, std::string{nextChar, '='}, line, column};
   }
 
   if (nextChar == '/') {
     nextChar = scanner.peek();
     if (nextChar != '/' && nextChar != '*')
-      return Token(TokenClass::GT, std::string{'/'}, line, column);
+      return Token{TokenClass::GT, std::string{'/'}, line, column};
 
-    char lastChar = nextChar;
+    char lastChar{nextChar};
     scanner.next();
     nextChar = scanner.peek();
     if (lastChar == '/') { // single line comment
@@ -182,28 +182,29 @@ Token Tokeniser::nextToken() {
     return nextToken();
   }
 
-  error(std::format("Lexing error: unrecognised character ({}) at {}:{}",
+  error(std::format("Lexing error: unrecognised character ({}) at {}:{}!",
                     nextChar, line, column));
-  return Token(TokenClass::INVALID, std::string{nextChar}, line, column);
+  return Token{TokenClass::INVALID, std::string{nextChar}, line, column};
 }
 
 static Token lexKeywordOrIdent(Scanner &scanner, std::string str, int line,
                                int column, ErrorFunction error) {
-  char nextChar = scanner.peek();
+  char nextChar{scanner.peek()};
 
-  // TODO: error for unfinished keyword or ident
   if (nextChar == -1)
-    return Token(TokenClass::END, "EOF", line, column);
+    return Token{TokenClass::END, "EOF", line, column};
 
   while (std::isalpha(nextChar)) {
     str += nextChar;
     scanner.next();
     nextChar = scanner.peek();
 
-    // TODO: error for unfinished keyword or ident
-    if (nextChar == -1)
-      return Token(TokenClass::END, "EOF", line, column);
-
+    if (nextChar == -1) {
+      error(std::format(
+          "Lexing error: file ending cutoff keyword or identifier at {}:{}!",
+          line, column));
+      return Token{TokenClass::INVALID, std::string{str}, line, column};
+    }
     if (!std::isalnum(nextChar) && nextChar != '_') {
       return possibleKeywordToToken(str, line, column);
     }
@@ -214,16 +215,18 @@ static Token lexKeywordOrIdent(Scanner &scanner, std::string str, int line,
     scanner.next();
     nextChar = scanner.peek();
 
-    // TODO: error for unfinished ident
-    if (nextChar == -1)
-      return Token(TokenClass::END, "EOF", line, column);
+    if (nextChar == -1) {
+      error(std::format("Lexing error: file ending cutoff identifier at {}:{}!",
+                        line, column));
+      return Token{TokenClass::INVALID, std::string{str}, line, column};
+    }
   }
   Token foundToken{possibleKeywordToToken(str, line, column)};
   if (foundToken.type != TokenClass::IDENTIFIER) {
     error(std::format(
         "Lexing error: identifier at {}:{} cannot be reserved keyword!", line,
         column));
-    return Token(TokenClass::INVALID, str, line, column);
+    return Token{TokenClass::INVALID, str, line, column};
   }
   return foundToken;
 }
@@ -231,11 +234,10 @@ static Token lexKeywordOrIdent(Scanner &scanner, std::string str, int line,
 static Token lexCharLiteral(Scanner &scanner, int line, int column,
                             ErrorFunction error) {
 
-  char nextChar = scanner.peek();
+  char nextChar{scanner.peek()};
 
-  // TODO: error for unfinished char
   if (nextChar == -1)
-    return Token(TokenClass::END, "EOF", line, column);
+    return Token{TokenClass::END, "EOF", line, column};
 
   std::string str;
 
@@ -243,9 +245,12 @@ static Token lexCharLiteral(Scanner &scanner, int line, int column,
     scanner.next();
     nextChar = scanner.peek();
 
-    // TODO: error for unfinished char
-    if (nextChar == -1)
-      return Token(TokenClass::END, "EOF", line, column);
+    if (nextChar == -1) {
+      error(std::format("Lexing error: char at {}:{} must be enclosed "
+                        "between apostrophes!",
+                        line, column));
+      return Token{TokenClass::INVALID, str, line, column};
+    }
 
     if (isEscapeCharacter(nextChar)) {
       str = std::string{toEscapeCharacter(nextChar)};
@@ -256,10 +261,10 @@ static Token lexCharLiteral(Scanner &scanner, int line, int column,
         error(std::format("Lexing error: char at {}:{} must be enclosed "
                           "between apostrophes!",
                           line, column));
-        return Token(TokenClass::INVALID, str, line, column);
+        return Token{TokenClass::INVALID, str, line, column};
       }
       scanner.next();
-      return Token(TokenClass::CHAR_LITERAL, str, line, column);
+      return Token{TokenClass::CHAR_LITERAL, str, line, column};
     }
   }
 
@@ -271,19 +276,19 @@ static Token lexCharLiteral(Scanner &scanner, int line, int column,
     error(std::format("Lexing error: char at {}:{} must be enclosed "
                       "between apostrophes!",
                       line, column));
-    return Token(TokenClass::INVALID, str, line, column);
+    return Token{TokenClass::INVALID, str, line, column};
   }
   scanner.next();
-  return Token(TokenClass::CHAR_LITERAL, str, line, column);
+  return Token{TokenClass::CHAR_LITERAL, str, line, column};
 }
 
 static Token lexStringLiteral(Scanner &scanner, int line, int column,
                               ErrorFunction error) {
   std::string str{""};
-  char nextChar = scanner.peek();
+  char nextChar{scanner.peek()};
 
   if (nextChar == -1)
-    return Token(TokenClass::END, "EOF", line, column);
+    return Token{TokenClass::END, "EOF", line, column};
 
   while (nextChar != '"') {
     if (nextChar == '\\') {
@@ -291,16 +296,24 @@ static Token lexStringLiteral(Scanner &scanner, int line, int column,
       nextChar = toEscapeCharacter(scanner.peek());
     }
 
-    // TODO: add error for unfinished string
-    if (nextChar == -1)
-      return Token(TokenClass::END, "EOF", line, column);
+    if (nextChar == -1) {
+      error(std::format("Lexing error: string at {}:{} must be enclosed "
+                        "between quotes!",
+                        line, column));
+      return Token{TokenClass::INVALID, str, line, column};
+    }
     str += nextChar;
     scanner.next();
     nextChar = scanner.peek();
   }
   scanner.next();
 
-  return Token(TokenClass::STRING_LITERAL, str, line, column);
+  return Token{TokenClass::STRING_LITERAL, str, line, column};
+}
+
+static Token lexIntLiteral(Scanner &scanner, std::string str, int line,
+                           int column, ErrorFunction error) {
+  char nextChar{scanner.peek()};
 }
 
 static Token possibleKeywordToToken(const std::string_view str, const int line,
